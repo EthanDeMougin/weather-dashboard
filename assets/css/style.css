@@ -5,7 +5,7 @@
 }
 
 .h1-container {
-    padding: 6px;
+    padding: 8px;
 }
 
 .form-container {
@@ -22,6 +22,7 @@
     height: 40px;
     border-color: lightgrey;
     border-width: thin;
+    padding: 0 15px;
 }
 
 .search-button {
