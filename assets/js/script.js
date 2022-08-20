@@ -4,6 +4,7 @@ var savedSearches = [];
 
 // make list of previously searched cities
 var searchHistoryList = function(cityName) {
+    $('.past-search:contains("' + cityName + '")').remove();
     // create entry with city name
     var searchHistoryEntry = $("<p>");
     searchHistoryEntry.addClass("past-search");
@@ -75,6 +76,10 @@ var currentWeatherSection = function(cityName) {
                 })
                 // get data from response and apply them to the current weather section
                 .then(function(response){
+                    searchHistoryList(cityName);
+                    // add current weather container with border to page
+                    var currentWeatherContainer = $("#current-weather-container");
+                    currentWeatherContainer.addClass("current-weather-container");
                      // add city name, date, and weather icon to current weather section title
                     var currentTitle = $("#current-title");
                     var currentDay = moment().format("M/D/YYYY");
@@ -113,7 +118,14 @@ var currentWeatherSection = function(cityName) {
                     } else {
                         currentNumber.addClass("severe");
                     }
-                }) 
+                })
+            })
+            .catch(function(err) {
+                // reset search input
+                $("#search-input").val("");
+    
+                // alert user that there was an error
+                alert("We could not find the city you searched for. Try searching for a valid city.");
         });
 };
 
@@ -134,8 +146,15 @@ var fiveDayForecastSection = function(cityName) {
                 })
                 .then(function(response) {
                     console.log(response);
+                    // add 5 day forecast title
+                    var futureForecastTitle = $("#future-forecast-title");
+                    futureForecastTitle.text("5-Day Forecast:")
 
                     for (var i = 1; i <= 5; i++) {
+                        // add class to future cards to create card containers
+                        var futureCard = $(".future-card");
+                        futureCard.addClass("future-card-details");
+
                         var futureDate = $("#future-date-" + i);
                         console.log(futureDate);
                         date = moment().add(i, "d").format("M/D/YYYY");
@@ -172,7 +191,6 @@ $("#search-form").on("submit", function() {
         event.preventDefault();
     } else {
         // if cityName is valid, add it to search history list and display its weather conditions
-        searchHistoryList(cityName);
         currentWeatherSection(cityName);
         fiveDayForecastSection(cityName);
     }
@@ -183,6 +201,9 @@ $("#search-history-container").on("click", "p", function() {
     var previousCityName = $(this).text();
     currentWeatherSection(previousCityName);
     fiveDayForecastSection(previousCityName);
+
+    var previousCityClicked = $(this);
+    previousCityClicked.remove();
 });
 
 loadSearchHistory();
